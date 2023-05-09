@@ -1,21 +1,48 @@
 import unittest
 
+from app.count_items import GroceryCart
+import softest
 
-class GroceryCart:
-    def __init__(self):
-        self.items = {}
-
-    def add_item(self, item, quantity):
-        if item in self.items:
-            self.items[item] += quantity
-        else:
-            self.items[item] = quantity
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from webdriver_manager.chrome import ChromeDriverManager
 
 
-    def count_items(self):
-        return len(self.items)
+class TestShopifyGroceriesPage(unittest.TestCase):
+    def setUp(self) -> None:
+        self.chrome = webdriver.Chrome(executable_path=ChromeDriverManager().install())
+        self.chrome.maximize_window()
+        self.chrome.get("https://www.freshful.ro/")
+        self.chrome.implicitly_wait(2)
 
-    def total_cost(self):
-        return sum([item.price * quantity for item, quantity in self.items.items()])
+    def tearDown(self) -> None:
+        self.chrome.quit()
 
 
+class TestGroceryCart(unittest.TestCase):
+    def setUp(self):
+        self.cart = GroceryCart()
+        self.item1 = Item("apples", 0.5)
+        self.item2 = Item("bananas", 0.3)
+
+    def test_add_item(self):
+        self.cart.add_item(self.item1, 3)
+        self.assertEqual(self.cart.count_items(), 1)
+
+        self.cart.add_item(self.item2, 2)
+        self.assertEqual(self.cart.count_items(), 2)
+
+
+    def test_total_cost(self):
+        self.cart.add_item(self.item1, 3)
+        self.cart.add_item(self.item2, 2)
+
+
+class Item:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+
+if __name__ == '__main__':
+    unittest.main()
