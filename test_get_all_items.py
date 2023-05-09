@@ -1,5 +1,22 @@
 import unittest
+
 from app.get_all_items import GroceryCart
+import softest
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from webdriver_manager.chrome import ChromeDriverManager
+
+
+class TestShopifyGroceriesPage(unittest.TestCase):
+    def setUp(self) -> None:
+        self.chrome = webdriver.Chrome(executable_path=ChromeDriverManager().install())
+        self.chrome.maximize_window()
+        self.chrome.get("https://www.freshful.ro/")
+        self.chrome.implicitly_wait(2)
+
+    def tearDown(self) -> None:
+        self.chrome.quit()
 
 
 class TestGroceryCart(unittest.TestCase):
